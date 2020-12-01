@@ -1,0 +1,4 @@
+name: "bukkit"
+host: "127.0.0.1"
+port: 4452
+redirectChat: true
