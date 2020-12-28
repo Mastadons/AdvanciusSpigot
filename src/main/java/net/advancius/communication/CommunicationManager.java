@@ -7,6 +7,7 @@ import net.advancius.flag.DefinedFlag;
 import net.advancius.flag.FlagManager;
 import net.advancius.protocol.Protocol;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
@@ -47,6 +48,9 @@ public class CommunicationManager {
 
     private CommunicationConnector communicationConnector;
 
+    private SecretKey encryptionKey;
+    private byte[] salt;
+
     public void startCommunication() {
         AdvanciusLogger.info("Starting communication connector.");
         communicationConnector = new CommunicationConnector(this);
@@ -60,11 +64,6 @@ public class CommunicationManager {
 
         communicationReader = new CommunicationReader(clientConnection);
         communicationReader.start();
-
-        CommunicationPacket communicationPacket = CommunicationPacket.generatePacket(Protocol.CLIENT_NAME);
-        communicationPacket.getMetadata().setMetadata("name", CommunicationConfiguration.getInstance().name);
-        sendPacket(communicationPacket);
-
         return socket;
     }
 

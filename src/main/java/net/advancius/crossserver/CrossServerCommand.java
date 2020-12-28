@@ -9,6 +9,7 @@ import net.advancius.flag.DefinedFlag;
 import net.advancius.flag.FlagManager;
 import net.advancius.protocol.Protocol;
 import net.advancius.utils.ColorUtils;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 @FlagManager.FlaggedClass
@@ -24,7 +25,7 @@ public class CrossServerCommand extends BasicCommandListener {
     }
 
     @CommandHandler
-    public void onPlayerCommand(Player player, CommandFlagList flagList) throws Exception {
+    public void onPlayerCommand(CommandSender sender, CommandFlagList flagList) throws Exception {
         CommunicationPacket communicationPacket = CommunicationPacket.generatePacket(Protocol.CLIENT_CROSS_COMMAND);
 
         String server = flagList.getFlag("server").getData();
@@ -32,8 +33,8 @@ public class CrossServerCommand extends BasicCommandListener {
 
         communicationPacket.getMetadata().setMetadata("server", server);
         communicationPacket.getMetadata().setMetadata("command", command);
+        communicationPacket.getMetadata().setMetadata("sender", sender.getName());
 
         AdvanciusSpigot.getInstance().getCommunicationManager().sendPacket(communicationPacket);
-        player.sendMessage(ColorUtils.translateColor(String.format("&3Me &8-> &3%s &7» &f%s", server, command)));
     }
 }
