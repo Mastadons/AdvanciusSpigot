@@ -1,5 +1,7 @@
-key: "MWQwNGQ5ZjgtMDRkNi00MDVlLTgzMDMtY2E2NDY1MzNjYmE0"
-host: "127.0.0.1"
-port: 4452
+authenticationToken: MWQwNGQ5ZjgtMDRkNi00MDVlLTgzMDMtY2E2NDY1MzNjYmE0
+identifier: "internal:server"
+
+packetAddress: "https://127.0.0.1:8080/packet"
+socketAddress: "wss://127.0.0.1:8080/events"
+
 redirectChat: true
-encryption: 5TcodZkpaqWaLVGPT4Nezg==

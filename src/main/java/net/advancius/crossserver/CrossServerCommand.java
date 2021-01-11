@@ -4,13 +4,10 @@ import net.advancius.AdvanciusSpigot;
 import net.advancius.command.BasicCommandListener;
 import net.advancius.command.CommandManager;
 import net.advancius.command.flag.CommandFlagList;
-import net.advancius.communication.CommunicationPacket;
 import net.advancius.flag.DefinedFlag;
 import net.advancius.flag.FlagManager;
-import net.advancius.protocol.Protocol;
-import net.advancius.utils.ColorUtils;
+import net.advancius.packet.Packet;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @FlagManager.FlaggedClass
 public class CrossServerCommand extends BasicCommandListener {
@@ -26,15 +23,15 @@ public class CrossServerCommand extends BasicCommandListener {
 
     @CommandHandler
     public void onPlayerCommand(CommandSender sender, CommandFlagList flagList) throws Exception {
-        CommunicationPacket communicationPacket = CommunicationPacket.generatePacket(Protocol.CLIENT_CROSS_COMMAND);
+        Packet packet = Packet.generatePacket("cross_command");
 
         String server = flagList.getFlag("server").getData();
         String command = flagList.getFlag("command").getData();
 
-        communicationPacket.getMetadata().setMetadata("server", server);
-        communicationPacket.getMetadata().setMetadata("command", command);
-        communicationPacket.getMetadata().setMetadata("sender", sender.getName());
+        packet.getMetadata().setMetadata("server", server);
+        packet.getMetadata().setMetadata("command", command);
+        packet.getMetadata().setMetadata("sender", sender.getName());
 
-        AdvanciusSpigot.getInstance().getCommunicationManager().sendPacket(communicationPacket);
+        AdvanciusSpigot.getInstance().getCommunicationManager().getClient().sendPacket(packet, null);
     }
 }

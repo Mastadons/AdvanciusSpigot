@@ -1,7 +1,7 @@
 package net.advancius.flag;
 
 import net.advancius.AdvanciusLogger;
-import org.reflections.Reflections;
+import org.reflections8.Reflections;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;

@@ -1,6 +1,6 @@
 name: AdvanciusSpigot
 main: net.advancius.AdvanciusSpigot
-version: 1.0
+version: 1.2.0-SNAPSHOT
 description: A simple to use plugin designed to handle all of your chatting needs!
 author: Mastadons
 softdepend: [Towny, Factions, TownyChat, PlaceholderAPI]
