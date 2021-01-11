@@ -2,39 +2,41 @@ package net.advancius.communication;
 
 import lombok.Data;
 import lombok.SneakyThrows;
+import net.advancius.AdvanciusClient;
 import net.advancius.AdvanciusLogger;
-import net.advancius.AdvanciusSpigot;
 
-import java.io.IOException;
-import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 @Data
 public class CommunicationConnector extends Thread {
 
-    private final CommunicationManager communicationManager;
+    private final AdvanciusClient client;
 
     @SneakyThrows
     @Override
     public void run() {
         while (true) {
-            if (!isCurrentlyConnected()) {
-                try {
-                    AdvanciusLogger.info("Attempting to establish a connection to the AdvanciusBungee server.");
-                    Socket socket = communicationManager.attemptConnection();
 
-                    AdvanciusLogger.info("Successfully established connection to server " + socket.getRemoteSocketAddress() + ":" + socket.getPort());
-                } catch (IOException exception) {
-                    AdvanciusLogger.warn("Failed to establish connection to server, trying again in ten seconds.");
-                    this.sleep(10 * 1000);
+            if (!client.hasPacketConnection()) {
+                try {
+                    AdvanciusLogger.info("Attempting to establish a packet connection to the AdvanciusBungee server.");
+                    client.establishPacketConnection().get(5, TimeUnit.SECONDS);
+                    AdvanciusLogger.info("Successfully established packet connection!");
+                } catch (Exception exception) {
+                    AdvanciusLogger.info("Failed to establish packet connection!");
                 }
             }
+            if (!client.hasSocketConnection()) {
+                try {
+                    AdvanciusLogger.info("Attempting to establish a socket connection to the AdvanciusBungee server.");
+                    client.establishSocketConnection().get(5, TimeUnit.SECONDS);
+                    AdvanciusLogger.info("Successfully established socket connection!");
+                } catch (Exception exception) {
+                    AdvanciusLogger.info("Failed to establish socket connection!");
+                }
+            }
+
+            Thread.sleep(10000);
         }
-
-    }
-
-    private boolean isCurrentlyConnected() {
-        Connection currentConnection = communicationManager.getClientConnection();
-        return currentConnection != null && !currentConnection.getSocket().isClosed() &&
-        !currentConnection.getSocket().isInputShutdown() && !currentConnection.getSocket().isOutputShutdown();
     }
 }

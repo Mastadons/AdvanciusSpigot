@@ -36,9 +36,11 @@ public class CommunicationConfiguration {
         AdvanciusLogger.info("Loaded communication configuration!");
     }
 
-    public String key;
-    public String host;
-    public int port;
+    public String authenticationToken;
+    public String identifier;
+
+    public String packetAddress;
+    public String socketAddress;
+
     public boolean redirectChat;
-    public String encryption;
 }

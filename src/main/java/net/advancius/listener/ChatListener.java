@@ -1,15 +1,12 @@
 package net.advancius.listener;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.advancius.AdvanciusConfiguration;
 import net.advancius.AdvanciusLogger;
 import net.advancius.AdvanciusSpigot;
 import net.advancius.communication.CommunicationConfiguration;
-import net.advancius.communication.CommunicationPacket;
 import net.advancius.flag.DefinedFlag;
 import net.advancius.flag.FlagManager;
-import net.advancius.protocol.Protocol;
+import net.advancius.packet.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +18,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @FlagManager.FlaggedClass
 public class ChatListener implements Listener {
@@ -33,7 +32,7 @@ public class ChatListener implements Listener {
     private Map<String, Long> sentMessageList = new HashMap<>();
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerChat(PlayerChatEvent event) {
+    public void onPlayerChat(PlayerChatEvent event) throws InterruptedException, ExecutionException, TimeoutException {
         if (AdvanciusConfiguration.getInstance().defaultFormatWorkaround && !event.getFormat().equals(defaultChatFormat(event))) return;
         if (event.isCancelled()) return;
         if (!CommunicationConfiguration.getInstance().isRedirectChat()) return;
@@ -46,11 +45,11 @@ public class ChatListener implements Listener {
         AdvanciusLogger.info("Processing server-side chat message: " + event.getMessage());
         event.setCancelled(true);
 
-        CommunicationPacket communicationPacket = CommunicationPacket.generatePacket(Protocol.CLIENT_CHAT);
-        communicationPacket.getMetadata().setMetadata("person", event.getPlayer().getUniqueId().toString());
-        communicationPacket.getMetadata().setMetadata("message", event.getMessage());
+        Packet packet = Packet.generatePacket("server_chat");
+        packet.getMetadata().setMetadata("person", event.getPlayer().getUniqueId().toString());
+        packet.getMetadata().setMetadata("message", event.getMessage());
 
-        AdvanciusSpigot.getInstance().getCommunicationManager().sendPacket(communicationPacket);
+        AdvanciusSpigot.getInstance().getCommunicationManager().getClient().sendPacket(packet, response -> {});
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
