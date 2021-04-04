@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @FlagManager.FlaggedClass
 public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.PlaceholderExpansion {
@@ -27,9 +28,9 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
 
         String[] components = identifier.split("_");
         if (components[0].equals("statistic")) {
-            return getStatistic(player.getUniqueId(), components[0], components[1]);
+            return getStatistic(player.getUniqueId(), components[1], components[2]);
         } else if (components[0].equalsIgnoreCase("dump")) {
-            return getDumpResponse(player.getUniqueId(), components[0]);
+            return getDumpResponse(player.getUniqueId(), components[1]);
         }
         return null;
     }
@@ -45,7 +46,10 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
             PacketResponse response = futureResponse.get(3, TimeUnit.SECONDS);
 
             return response.getMetadata().getMetadata("score");
-        } catch (Exception exception) {
+        } catch (TimeoutException exception) {
+            return "remote_timeout";
+        }
+        catch (Exception exception) {
             exception.printStackTrace();
             return null;
         }
@@ -61,7 +65,10 @@ public class PlaceholderExpansion extends me.clip.placeholderapi.expansion.Place
             PacketResponse response = futureResponse.get(3, TimeUnit.SECONDS);
 
             return response.getMetadata().getMetadata("dump");
-        } catch (Exception exception) {
+        } catch (TimeoutException exception) {
+            return "remote_timeout";
+        }
+        catch (Exception exception) {
             exception.printStackTrace();
             return null;
         }

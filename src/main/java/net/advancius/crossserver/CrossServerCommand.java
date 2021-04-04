@@ -1,5 +1,6 @@
 package net.advancius.crossserver;
 
+import net.advancius.AdvanciusLogger;
 import net.advancius.AdvanciusSpigot;
 import net.advancius.command.BasicCommandListener;
 import net.advancius.command.CommandManager;
@@ -32,6 +33,7 @@ public class CrossServerCommand extends BasicCommandListener {
         packet.getMetadata().setMetadata("command", command);
         packet.getMetadata().setMetadata("sender", sender.getName());
 
+        AdvanciusLogger.info("Sending cross command to " + server + ": " + command);
         AdvanciusSpigot.getInstance().getCommunicationManager().getClient().sendPacket(packet, null);
     }
 }
